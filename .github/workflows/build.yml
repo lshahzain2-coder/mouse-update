@@ -7,9 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: MouseBar
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -19,8 +16,11 @@ jobs:
       - uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 7.5
-      - run: gradle assembleDebug --no-daemon
+      - name: Build debug APK
+        run: |
+          cd "$(dirname "$(find . -name settings.gradle | head -n 1)")"
+          gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: mousebar-apk
-          path: MouseBar/app/build/outputs/apk/debug/app-debug.apk
+          path: "**/app/build/outputs/apk/debug/app-debug.apk"
